@@ -12,7 +12,7 @@ class Requester:
         function = getattr(requests, method)
         to_wait = self.last_request_at + self.seconds_between_requests - time()
         if to_wait > 0:
-            print(f'Sleeping for {to_wait} s until next request')
+            print(f'Sleeping for {round(to_wait, 2)} s until next request')
             sleep(to_wait)
         print(f'{method.upper()} {args} {kwargs}')
         r = function(*args, **kwargs)
