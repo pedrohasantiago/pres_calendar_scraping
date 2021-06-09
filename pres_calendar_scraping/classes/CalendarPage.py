@@ -32,8 +32,7 @@ class CalendarPage:
     def _event_containers(self):
         selector = '.item-compromisso'
         containers = self.soup.select(selector)
-        assert len(containers) > 0, \
-            f'Found nothing in {self.response.url} with CSS selector {selector}'
+        print(f'Found nothing in {self.response.url} with CSS selector {selector}')
         return containers
 
     def to_events(self) -> Iterator[Event]:
