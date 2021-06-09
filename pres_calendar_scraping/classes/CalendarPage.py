@@ -39,6 +39,8 @@ class CalendarPage:
     def to_events(self) -> Iterator[Event]:
         for container in self._event_containers:
             container: Tag
+            if 'sem-compromisso' in container['class']:
+                continue
             datetime_beginning, datetime_end = (datetime.combine(self.date, str_to_time(found_str), tzinfo=Event.tz) if (found_str := find_string_in_child(container, class_=tag_class)) is not None else found_str
                                                 for tag_class in ('compromisso-inicio', 'compromisso-fim'))
             title = find_string_in_child(container, class_='compromisso-titulo')
