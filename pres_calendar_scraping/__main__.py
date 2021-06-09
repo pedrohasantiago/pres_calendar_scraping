@@ -10,7 +10,7 @@ from pres_calendar_scraping.db.connection import connection
 MIN_EVENT_DATE = date(2019, 1, 1)
 
 db_connector = DBConnector(connection)
-requester = Requester(seconds_between_requests=10)
+requester = Requester(seconds_between_requests=3)
 
 if not db_connector.was_table_created():
     db_connector.create_table()
