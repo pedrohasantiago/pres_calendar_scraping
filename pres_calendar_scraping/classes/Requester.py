@@ -13,6 +13,7 @@ class Requester:
         if to_wait > 0:
             print(f'Sleeping for {to_wait} s until next request')
             sleep(to_wait)
+        print(f'Requesting {args} {kwargs}')
         r = function(*args, **kwargs)
         self.last_request_at = time()
         r.raise_for_status()
