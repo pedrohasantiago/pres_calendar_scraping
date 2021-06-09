@@ -1,7 +1,7 @@
 from datetime import date, time, datetime
 from functools import cached_property
 from datetime import date
-from typing import Iterator, Optional, cast
+from typing import Iterator, Optional
 
 from bs4 import BeautifulSoup
 from bs4.element import Tag
