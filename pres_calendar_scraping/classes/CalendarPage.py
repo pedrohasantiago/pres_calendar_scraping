@@ -19,7 +19,7 @@ class CalendarPage:
     @classmethod
     def from_date(cls, page_date: date, requester: Requester):
         url = f'https://www.gov.br/planalto/pt-br/acompanhe-o-planalto/agenda-do-presidente-da-republica/{page_date.isoformat()}'
-        response = requester.request('get', url)
+        response = requester.request('get', url, timeout=60*2)
         return cls(response)
 
     @cached_property
