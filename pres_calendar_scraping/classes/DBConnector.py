@@ -66,7 +66,7 @@ class DBConnector:
         ''' # f-string because DB param-substitution doesn't work
         row = next(self.connection.execute(command))
         title, datetime_beginning_int, datetime_end_int, location = row
-        datetime_beginning, datetime_end = (datetime.fromtimestamp(ts, tz=Event.tz)
+        datetime_beginning, datetime_end = (ts and datetime.fromtimestamp(ts, tz=Event.tz)
                                             for ts in (datetime_beginning_int, datetime_end_int))
         return Event(
             title,
