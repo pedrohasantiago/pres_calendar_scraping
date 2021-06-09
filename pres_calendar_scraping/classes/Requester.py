@@ -1,5 +1,6 @@
-import requests
 from time import time, sleep
+
+import requests
 
 class Requester:
 
