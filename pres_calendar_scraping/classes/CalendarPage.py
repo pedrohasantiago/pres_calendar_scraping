@@ -1,7 +1,7 @@
 from datetime import date, time, datetime
 from functools import cached_property
 from datetime import date
-from typing import Iterator
+from typing import Iterator, Optional, cast
 
 from bs4 import BeautifulSoup
 from bs4.element import Tag
@@ -39,17 +39,20 @@ class CalendarPage:
     def to_events(self) -> Iterator[Event]:
         for container in self._event_containers:
             container: Tag
-            datetime_beginning, datetime_end = (datetime.combine(self.date, str_to_time(find_string_in_child(container, class_=tag_class)), tzinfo=Event.tz)
+            datetime_beginning, datetime_end = (datetime.combine(self.date, str_to_time(found_str), tzinfo=Event.tz) if (found_str := find_string_in_child(container, class_=tag_class)) is not None else found_str
                                                 for tag_class in ('compromisso-inicio', 'compromisso-fim'))
-            title: str = find_string_in_child(container, class_='compromisso-titulo')
-            location: str = find_string_in_child(container, class_='compromisso-local')
+            title = find_string_in_child(container, class_='compromisso-titulo')
+            location = find_string_in_child(container, class_='compromisso-local')
+            assert title is not None, title
+            assert datetime_beginning is not None, datetime_beginning
             yield Event(title, datetime_beginning, datetime_end, location)
 
 
-def str_to_time(date_str) -> time:
+def str_to_time(date_str: str) -> time:
     hour, minutes = (int(part) for part in date_str.split('h'))
     return time(hour, minutes)
 
 
-def find_string_in_child(parent_tag: Tag, *args, **kwargs) -> str:
-    return parent_tag.find(*args, **kwargs).string
+def find_string_in_child(parent_tag: Tag, *args, **kwargs) -> Optional[str]:
+    tag: Optional[Tag] = parent_tag.find(*args, **kwargs)
+    return tag.string if tag is not None else None

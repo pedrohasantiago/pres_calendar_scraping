@@ -1,6 +1,6 @@
 from datetime import datetime
 from sqlite3 import Connection
-from typing import Iterable, List, Tuple
+from typing import Iterable, List, Tuple, Optional
 
 from pres_calendar_scraping.classes.Event import Event
 
@@ -14,8 +14,8 @@ class DBConnector:
             CREATE TABLE events (
                 title TEXT NOT NULL,
                 datetime_beginning INTEGER NOT NULL,
-                datetime_end INTEGER NOT NULL,
-                location TEXT NOT NULL
+                datetime_end INTEGER,
+                location TEXT
             )
         '''
         self.connection.execute(command)
@@ -43,28 +43,28 @@ class DBConnector:
 
     def insert_many(self, events: Iterable[Event]):
         """Doesn't commit."""
-        event_tuples: List[Tuple[str, int, int, str]] = []
+        event_tuples: List[Tuple[str, int, Optional[int], Optional[str]]] = []
         for event in events:
-            assert all(dt.tzinfo == Event.tz for dt in (event.datetime_beginning, event.datetime_end))
+            assert all(dt.tzinfo == Event.tz for dt in (event.datetime_beginning, event.datetime_end) if dt is not None)
             print(f'Will insert {event}')
             event_tuples.append(
                 (
                     event.title,
                     int(event.datetime_beginning.timestamp()),
-                    int(event.datetime_end.timestamp()),
+                    int(event.datetime_end.timestamp()) if event.datetime_end is not None else None,
                     event.location
                 )
             )
         self.connection.executemany('INSERT INTO events VALUES (?,?,?,?);', event_tuples)
 
     def get_last_in_col(self, column: str) -> Event:
-        command = '''
+        command = f'''
             SELECT *
             FROM events
-            ORDER BY ? desc
+            ORDER BY {column} desc
             LIMIT 1;
-        '''
-        row = next(self.connection.execute(command, [column]))
+        ''' # f-string because DB param-substitution doesn't work
+        row = next(self.connection.execute(command))
         title, datetime_beginning_int, datetime_end_int, location = row
         datetime_beginning, datetime_end = (datetime.fromtimestamp(ts, tz=Event.tz)
                                             for ts in (datetime_beginning_int, datetime_end_int))

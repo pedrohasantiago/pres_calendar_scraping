@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime, tzinfo
-from typing import cast
+from typing import Optional, cast
 
 from dateutil.tz import gettz
 
@@ -8,6 +8,6 @@ from dateutil.tz import gettz
 class Event:
     title: str
     datetime_beginning: datetime
-    datetime_end: datetime
-    location: str
+    datetime_end: Optional[datetime]
+    location: Optional[str]
     tz: tzinfo = field(repr=False, default=cast(tzinfo, gettz('America/Sao_Paulo')))
