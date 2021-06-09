@@ -55,4 +55,6 @@ def str_to_time(date_str: str) -> time:
 
 def find_string_in_child(parent_tag: Tag, *args, **kwargs) -> Optional[str]:
     tag: Optional[Tag] = parent_tag.find(*args, **kwargs)
-    return tag.string if tag is not None else None
+    return (tag.text or None  # .text may return an empty string
+        if tag is not None
+        else None)
