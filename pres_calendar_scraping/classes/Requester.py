@@ -7,7 +7,7 @@ class Requester:
         self.seconds_between_requests = seconds_between_requests
         self.last_request_at = float('-inf')
 
-    def request(self, method: str, url: str, *args, **kwargs) -> requests.Response:
+    def request(self, method: str, *args, **kwargs) -> requests.Response:
         function = getattr(requests, method)
         to_wait = self.last_request_at + self.seconds_between_requests - time()
         if to_wait > 0:

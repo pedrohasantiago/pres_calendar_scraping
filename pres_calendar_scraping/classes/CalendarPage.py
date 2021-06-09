@@ -39,7 +39,7 @@ class CalendarPage:
     def to_events(self) -> Iterator[Event]:
         for container in self._event_containers:
             container: Tag
-            datetime_beginning, datetime_end = (datetime.combine(self.date, str_to_time(find_string_in_child(container, class_=tag_class)))
+            datetime_beginning, datetime_end = (datetime.combine(self.date, str_to_time(find_string_in_child(container, class_=tag_class)), tzinfo=Event.tz)
                                                 for tag_class in ('compromisso-inicio', 'compromisso-fim'))
             title: str = find_string_in_child(container, class_='compromisso-titulo')
             location: str = find_string_in_child(container, class_='compromisso-local')
@@ -47,7 +47,8 @@ class CalendarPage:
 
 
 def str_to_time(date_str) -> time:
-    return time(*date_str.split('h'))
+    hour, minutes = (int(part) for part in date_str.split('h'))
+    return time(hour, minutes)
 
 
 def find_string_in_child(parent_tag: Tag, *args, **kwargs) -> str:

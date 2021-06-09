@@ -2,13 +2,9 @@ from datetime import datetime
 from sqlite3 import Connection
 from typing import Iterable, List, Tuple
 
-from dateutil.tz import gettz
-
 from pres_calendar_scraping.classes.Event import Event
 
 class DBConnector:
-
-    tz = gettz('America/Sao_Paulo')
 
     def __init__(self, connection: Connection):
         self.connection = connection
@@ -24,7 +20,7 @@ class DBConnector:
         '''
         self.connection.execute(command)
 
-    def was_table_created(self):
+    def was_table_created(self) -> bool:
         command = '''
             SELECT name
             FROM sqlite_master
@@ -34,11 +30,23 @@ class DBConnector:
             return True
         return False
 
+    def is_table_empty(self) -> bool:
+        command = '''
+            SELECT COUNT(*)
+            FROM events;
+        '''
+        cursor = self.connection.execute(command)
+        row = cursor.fetchone()
+        if row is not None and row[0] > 0:
+            return False
+        return True
+
     def insert_many(self, events: Iterable[Event]):
         """Doesn't commit."""
         event_tuples: List[Tuple[str, int, int, str]] = []
         for event in events:
-            assert all(dt.tzinfo == self.tz for dt in (event.datetime_beginning, event.datetime_end))
+            assert all(dt.tzinfo == Event.tz for dt in (event.datetime_beginning, event.datetime_end))
+            print(f'Will insert {event}')
             event_tuples.append(
                 (
                     event.title,
@@ -58,7 +66,7 @@ class DBConnector:
         '''
         row = next(self.connection.execute(command, [column]))
         title, datetime_beginning_int, datetime_end_int, location = row
-        datetime_beginning, datetime_end = (datetime.fromtimestamp(ts, tz=self.tz)
+        datetime_beginning, datetime_end = (datetime.fromtimestamp(ts, tz=Event.tz)
                                             for ts in (datetime_beginning_int, datetime_end_int))
         return Event(
             title,
