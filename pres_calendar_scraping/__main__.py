@@ -10,7 +10,7 @@ from pres_calendar_scraping.db.connection import connection
 MIN_EVENT_DATE = date(2019, 1, 1)  # First day of the current administration. The source returns 404 before this.
 
 db_connector = DBConnector(connection)
-requester = Requester(min_sleep_time=5, max_sleep_time=60)
+requester = Requester(min_sleep_time=5, max_sleep_time=30)
 
 if not db_connector.was_table_created():
     db_connector.create_table()
