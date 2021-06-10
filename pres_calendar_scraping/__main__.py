@@ -16,7 +16,7 @@ db_connector.create_table_if_not_exists()
 if not db_connector.is_table_empty():
     # We have to start at 1 day after the max one, or else we will
     # repeat the start day if we have to rerun.
-    start_at = db_connector.get_last_in_col('datetime_beginning').beginning.date() + timedelta(days=1)
+    start_at = db_connector.get_last_in_col('beginning').beginning.date() + timedelta(days=1)
 else:
     start_at = MIN_EVENT_DATE
 
