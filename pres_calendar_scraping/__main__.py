@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from pandas import date_range, Timestamp
 
@@ -16,7 +16,7 @@ if not db_connector.was_table_created():
     db_connector.create_table()
     start_at = MIN_EVENT_DATE
 elif not db_connector.is_table_empty():
-    start_at = db_connector.get_last_in_col('datetime_beginning').datetime_beginning.date()
+    start_at = db_connector.get_last_in_col('datetime_beginning').datetime_beginning.date() + timedelta(days=1)
 else:
     start_at = MIN_EVENT_DATE
 
