@@ -12,10 +12,8 @@ MIN_EVENT_DATE = date(2019, 1, 1)  # First day of the current administration. Th
 db_connector = DBConnector(connection)
 requester = Requester(min_sleep_time=5, max_sleep_time=30)
 
-if not db_connector.was_table_created():
-    db_connector.create_table()
-    start_at = MIN_EVENT_DATE
-elif not db_connector.is_table_empty():
+db_connector.create_table_if_not_exists()
+if not db_connector.is_table_empty():
     # We have to start at 1 day after the max one, or else we will
     # repeat the start day if we have to rerun.
     start_at = db_connector.get_last_in_col('datetime_beginning').datetime_beginning.date() + timedelta(days=1)

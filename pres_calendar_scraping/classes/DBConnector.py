@@ -9,26 +9,29 @@ class DBConnector:
     def __init__(self, connection: Connection):
         self.connection = connection
 
-    def create_table(self):
+    def create_table_if_not_exists(self):
+        # The unique constraint is a protection against unwanted dupes.
+        # If they do exist in the source, we can remove the constraint.
         command = '''
-            CREATE TABLE events (
+            CREATE TABLE IF NOT EXISTS events (
                 title TEXT NOT NULL,
                 datetime_beginning INTEGER NOT NULL,
                 datetime_end INTEGER,
-                location TEXT
+                location TEXT,
+                UNIQUE(title, datetime_beginning)
             )
         '''
         self.connection.execute(command)
 
-    def was_table_created(self) -> bool:
-        command = '''
-            SELECT name
-            FROM sqlite_master
-            WHERE type='table' AND name='events';
-        '''
-        for row in self.connection.execute(command):
-            return True
-        return False
+    # def was_table_created(self) -> bool:
+    #     command = '''
+    #         SELECT name
+    #         FROM sqlite_master
+    #         WHERE type='table' AND name='events';
+    #     '''
+    #     for row in self.connection.execute(command):
+    #         return True
+    #     return False
 
     def is_table_empty(self) -> bool:
         command = '''
