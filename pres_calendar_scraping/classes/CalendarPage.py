@@ -41,10 +41,10 @@ class CalendarPage:
             container: Tag
             if 'sem-compromisso' in container['class']:
                 continue
-            datetime_beginning, datetime_end = (datetime.combine(self.date, str_to_time(found_str), tzinfo=Event.tz) if (found_str := find_string_in_child(container, class_=tag_class)) is not None else found_str
-                                                for tag_class in ('compromisso-inicio', 'compromisso-fim'))
-            title = find_string_in_child(container, class_='compromisso-titulo')
-            location = find_string_in_child(container, class_='compromisso-local')
+            datetime_beginning, datetime_end = (datetime.combine(self.date, str_to_time(found_str)) if (found_str := find_string_in_child(container, css_selector)) is not None else found_str
+                                                for css_selector in ('.compromisso-inicio', '.compromisso-fim'))
+            title = find_string_in_child(container, '.compromisso-titulo')
+            location = find_string_in_child(container, '.compromisso-local')
             assert title is not None, title
             assert datetime_beginning is not None, datetime_beginning
             yield Event(title, datetime_beginning, datetime_end, location)
@@ -55,8 +55,8 @@ def str_to_time(date_str: str) -> time:
     return time(hour, minutes)
 
 
-def find_string_in_child(parent_tag: Tag, *args, **kwargs) -> Optional[str]:
-    tag: Optional[Tag] = parent_tag.find(*args, **kwargs)
-    return (tag.text or None  # .text may return an empty string
-        if tag is not None
-        else None)
+def find_string_in_child(parent_tag: Tag, css_selector: str) -> Optional[str]:
+    tags = parent_tag.select(css_selector)
+    if not tags:
+        return None
+    return tags[0].text or None  # .text may return an empty string

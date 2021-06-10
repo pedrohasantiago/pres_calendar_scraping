@@ -1,13 +1,10 @@
-from dataclasses import dataclass, field
-from datetime import datetime, tzinfo
-from typing import Optional, cast
-
-from dateutil.tz import gettz
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Optional
 
 @dataclass
 class Event:
     title: str
-    datetime_beginning: datetime
-    datetime_end: Optional[datetime]
+    beginning: datetime
+    end: Optional[datetime]
     location: Optional[str]
-    tz: tzinfo = field(repr=False, default=cast(tzinfo, gettz('America/Sao_Paulo')))
