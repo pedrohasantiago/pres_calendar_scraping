@@ -18,7 +18,7 @@ class DBConnector:
                 datetime_beginning INTEGER NOT NULL,
                 datetime_end INTEGER,
                 location TEXT,
-                UNIQUE(title, datetime_beginning)
+                CONSTRAINT temp_dupe_write_protection UNIQUE(title, datetime_beginning)
             )
         '''
         self.connection.execute(command)
